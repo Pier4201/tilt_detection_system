@@ -32,7 +32,7 @@ const port = 3001;
 const dataFile = '/home/matteo/develop/httpsrv/receivedData.json';
 
 function loadData(){ //carica i dati già salvati se esistono
-  if(fs.existsSync(dataFile)){ //controlla se il file esiste
+  if(fs.existsSync(dataFile)){ //controlla se il file esiste 
     const rawData = fs.readFileSync(dataFile, 'utf-8'); //se il file esiste lo legge in maniera sincrona
     if (rawData.trim() === '') {
       return []; // Se il file è vuoto, ritorno array vuoto
