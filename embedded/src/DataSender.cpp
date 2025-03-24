@@ -5,7 +5,7 @@
 #include <string>
 #include <curl/curl.h>
 
-// Funzione per ottenere data e ora in UTC di quando avvengono le misurazioni 
+// function to get date and time in utc format
 std::string getTimestamp() {
     std::time_t t = std::time(nullptr);
     std::tm tm = *std::gmtime(&t);
@@ -14,21 +14,21 @@ std::string getTimestamp() {
     return std::string(buffer);
 }
 
-// Funzione per ricevere e scrivere la risposta del server in caso di successo o errore
+// function to write server response to check if it succeded or not (used during development for debugging purposes)
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output) {
     size_t totalSize = size * nmemb;
-    output->append((char*)contents, totalSize); //ogni volta che il server manda una parte di risposta viene aggiunta all'output
+    output->append((char*)contents, totalSize); //writes server response while it's being received
     return totalSize;
 }
 
-// Funzione per inviare i dati al server tramite HTTP POST
+// function to send data to server in a JSON
 void sendDataToServer(std::string infrastruttura, float accel_x, float accel_y, float accel_z,
     float gyro_x, float gyro_y, float gyro_z,
     float roll, float pitch, float yaw, bool allarme) {
 CURL *curl;
 CURLcode res;
 
-//Il JSON è un oggetto che raccoglie tutti i dati che si vogliono inviare al server
+//JSON structure below
 std::stringstream json;
 
 json << "{"
@@ -47,53 +47,55 @@ json << "{"
 << "}";
 
 std::string jsonData = json.str();
-//inizializza CURLs
+//CURL initialization
 curl = curl_easy_init(); 
 if(curl) {
 std::string responseString;
-/*La funzione curl_easy_setopt(curl, CURLoption, value); 
-dove il secondo valore indica che cosa deve fare la funzione
-CURLOPT_URL per impostare l'url, CURL_POST per indicare che voglio fare una POST,
-POSTFIELDS E POSTFIELDSIZE per passare il corpo della POST rispettivamente i dati da passare e la loro grandezza
-HTTPHEADER dopo la curl_list_append per specificare che l'header è di tipo JSON
-WRITEFUNCTION e WRITEDATA per catturare la risposta*/ 
-// Echo server per test
-curl_easy_setopt(curl, CURLOPT-URL, "https://192.168.20.122/data"); //richiesta https
-//curl_easy_setopt(curl, CURLOPT_URL, "192.168.20.122:3001/data"); // richiesta http
-curl_easy_setopt(curl, CURLOPT_POST, 1L); //si mette 1 per indicare di attivare la POST, 0 per distattivare
-//curl invia tramite HTTP POST il json 
-//Il payload della richiesta POST viene creato con la funzione successiva
-curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonData.c_str()); //Passa il json come dati da invitare tramite POST
-curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonData.size()); //specifica la lunghezza dei dati
-//Dice al server che sta inviando un JSON
+/*curl function has the following structure ---> curl_easy_setopt(curl, CURLoption, value); 
+CURLoption specifies curl_easy_setopt function
+CURLOPT_URL to set up url, CURL_POST to specify that we want to do a POST request,
+
+HTTPHEADER in curl_list_append to specify that we got a json header
+WRITEFUNCTION e WRITEDATA to get the response*/
+
+
+// Insert ur server ip in the next function:
+curl_easy_setopt(curl, CURLOPT-URL, "https://192.168.20.122/data"); // https request (depending on how we want to set up our server we can comment this)
+//curl_easy_setopt(curl, CURLOPT_URL, "192.168.20.122:3001/data"); // http request  (or this line)
+curl_easy_setopt(curl, CURLOPT_POST, 1L); 
+
+//in the next 2 calls we create the request payload
+curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonData.c_str()); //POSTFIELDS E POSTFIELDSIZE to specify the type and size of data that will be in the POST req body
+curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonData.size()); 
+
 struct curl_slist *headers = NULL;
-headers = curl_slist_append(headers, "Content-Type: application/json");
+headers = curl_slist_append(headers, "Content-Type: application/json"); //we specify that the contect type is a json file
 curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-//Disabilita verifica ssl
-curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); // Disabilita verifica del certificato
-curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); // Disabilita verifica dell'host
+//Disable ssl certificates verification cause in my case i autosigned them u don't need that if yours is from a trusted CA
+curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); // disable certificate verification
+curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); // disable host verification
 
-// Oppure, per usare un certificato CA specifico:
+// u can use this one if u want to use a certificate saved in ru system: (make sure to change it to your directory)
 // curl_easy_setopt(curl, CURLOPT_CAINFO, "/usr/local/share/ca-certificates/server-cert.crt");
 
 
-// Per leggere la risposta del server
+// function to read server response
 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseString);
 
-// Questa è la funzione che invia dati tramite la richiesta POST, quelle di prima servivano ad inizializzarla
+// we send the post request with the following line
 res = curl_easy_perform(curl);
-//Questo if else serve a vedere se la richiesta POST è andata a buon fine, caso in cui ne stampa la risposta altrimenti da errore
+//if else to check request outcome
 if(res != CURLE_OK) {
-//coverte il codice di errore in una stringa leggibile
+//converts error code into a string that we can read
 std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
 } else {
-std::cout << "Dati inviati correttamente al server.\n";
-std::cout << "Risposta del server:\n" << responseString << std::endl;
+std::cout << "Data correctly sent to server.\n";
+std::cout << "Server response:\n" << responseString << std::endl;
 }
 
-// Libera lo spazio in memoria usato da CURL per evitare gli sprechi di memoria
+// calls to free memory in space to avoid memory leaks
 curl_slist_free_all(headers);
 curl_easy_cleanup(curl);
 }

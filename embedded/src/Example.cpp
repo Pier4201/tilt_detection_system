@@ -7,44 +7,44 @@ volatile sig_atomic_t keep_running = 1;
 
 void handle_sigint(int sig) {
 
-    keep_running = 0;  // Imposto il flag a 0 per terminare il ciclo
+    keep_running = 0;  // Set flag to 0 to end cycle
 }
 
 MPU6050 device(0x68);
 
 int main() {
-	float ax, ay, az, gr, gp, gy, gyroOffsetX, gyroOffsetY, gyroOffsetZ, roll, pitch, yaw; //Variabili per conservare i dati dell'acceleromentro, del giroscopio e degli angoli
+	float ax, ay, az, gr, gp, gy, gyroOffsetX, gyroOffsetY, gyroOffsetZ, roll, pitch, yaw; //Variables to store accelerometer gyroscope and angles values
 	bool allarme;
 	float lastRoll, lastPitch, lastYaw;
 	unsigned int time, counter=0;
 	std::string infrastruttura;
-	sleep(1); //Tempo per aspettare che l'MPU6050 si stabilizzi
+	sleep(1); //we wait 1 sec for the MPU6050 to stabilize
     
 
-	//Calcola gli  offsets. Se voglio saltare il passaggio per vedere se la macchina funziona, posso commentare questa parte.
-	std::cout << "Calcolando gli offsets.\nMantenere il dispositivo fermo e in orizzontale, l'operazione potrebbe richiedere qualche minuto.\n";
+	//Call to dinamically measure drifting values
+	std::cout << "Measuring offsets.\nKeep the device still and horizontal, this process might take some minutes.\n";
 	device.getOffsets(&ax, &ay, &az, &gr, &gp, &gy);
 
 
-	//Leggi l'angolo di imbardata attuale.
+	//Reads current yaw angle.
 	device.calc_yaw = true;
-        //Variabile per inclinazione
+        //inclination value
 	float inclination_x, inclination_y;
 	
 	for (int i = 0; i < 40; i++) {
 
-	 // Lettura accelerometro per debug
+	 // Accelerometer readings
 	 device.getAccel(&ax, &ay, &az);
 	 if(i>=1){
-	 std::cout << "Accelerazione in g lungo gli assi (X,Y,Z): " << ax << ", " << ay << ", " << az << "\n";
+	 std::cout << "Accelerstion in g on axys (X,Y,Z): " << ax << ", " << ay << ", " << az << "\n";
 	    }
      device.getGyro(&gr, &gp, &gy);
-	 // Angoli filtrati dal filtro complementare (quelli corretti da usare) 
+	 // gyroscope readings 
 	 if(i>=1){
-	 std::cout << "Velocità angolari intorno agli assi:\nX: " << gr << "°/s, Y: " << gp << "°/s, Z: " << gy << "°/s\n";
+	 std::cout << "Angular velocity around axys:\nX: " << gr << "°/s, Y: " << gp << "°/s, Z: " << gy << "°/s\n";
 	    }
 
-	 //  inclinazioni solo accelerometro (debug, NON filtrate) 
+	 //  accelerometer only incline (for debug purposes only, they wont be sent to server) 
 	 inclination_x = atan2(ay, az) * 180 / M_PI;
 	 inclination_y = atan2(-ax, sqrt(ay * ay + az * az)) * 180 / M_PI;
 	 if(i>=1){
@@ -52,34 +52,34 @@ int main() {
 			   << "°, Y: " << inclination_y << "°\n";
 	    }
 
-    // Lettura angoli filtrati (Roll, Pitch, Yaw)
+    // Filtered angles (Roll, Pitch, Yaw)
 	
 	 device.getAngle(0, &roll); // Roll
 	 device.getAngle(1, &pitch); // Pitch
 	 device.getAngle(2, &yaw); // Yaw
 
 	 if(i>=1){
-	 //Inclinazione reale: 
-	 std::cout << "Inclinazione sugli assi X: " << roll << "°, Y: " << pitch << "°, Z: " << yaw << "°\n\n\n";
+	 //Effective incline: 
+	 std::cout << "Incline on axys X: " << roll << "°, Y: " << pitch << "°, Z: " << yaw << "°\n\n\n";
 	    }
-	 usleep(750000); // 0.75 secondi
+	 usleep(750000); // 0.75 secs
 	}
     
-	std::cout << "Inserire il nome dell'infrastruttura su cui è avvenuta la rilevazione: ";
+	std::cout << "Insert the name of infrastructure we are monitoring: ";
     std::cin >> infrastruttura;
-    /*getAccel e quindi l'accelerometro  misura l'inclinazione rispetto alla gravità. 
-        Per l'asse x è positivo se inclinato a destra, negativo se inclinato a sinistra.
-        Per y è positivo se inclinato in avanti, negativo se inclinato indietro.
-        Per z è abbastanza costante poichè  misura la gravità.*/
+    /*getAccel measures acceleration in g 
+        X axys will be positive if tilted right, negative if tilted left.
+        Y axys will be positive if tilted onwards, negative if tilted backwards.
+        Z will always measure 1 cause it in line with our gravity.*/
 		device.getAccel(&ax, &ay, &az);
-		std::cout << "Valori dell'accelerometro: X: " << ax << ", Y: " << ay << ", Z: " << az << "\n";
+		std::cout << "Accelerometer values (in g): X: " << ax << ", Y: " << ay << ", Z: " << az << "\n";
    
-		/*getGyro e quindi il giroscopio misura la velocità angolare ovvero la velocità con cui ruota il sensore.
-			L'asse delle x indica se il dispositivo ruota in avanti o all'indietro.
-			L'asse delle y indica se il dispositivo ruota a destra o a sinistra.
-			L'asse z indica se il dispositivo gira su se stesso. */
+		/*getGyro measures the angular velocity at whitch our sensor rotates.
+			X axys indicates onwards and backwards rotation.
+			Y axys indicates left and right rotation.
+			Z axys indicates if the device is rotating on itself. */
 		device.getGyro(&gr, &gp, &gy);
-		std::cout << "Valori del giroscopio(velocità angolare):\nX: " << gr << ", Y: " << gp << ", Z: " << gy << "\n";
+		std::cout << "Gyroscope values (in °/s):\nX: " << gr << ", Y: " << gp << ", Z: " << gy << "\n";
    
 		device.getAngle(0, &roll); // Roll
 		device.getAngle(1, &pitch); // Pitch
@@ -90,25 +90,19 @@ int main() {
 			allarme = false;
 		}
 	   
-		std::cout << "Angoli finali:\nX: " << roll << ", Y: " << pitch << ", Z: " << yaw << "\n";
+		std::cout << "Final angles:\nX: " << roll << ", Y: " << pitch << ", Z: " << yaw << "\n";
 		sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
 
-    signal(SIGINT, handle_sigint); //gestisco il comando SIGINT di uscita con la funzione handle_signint
+    signal(SIGINT, handle_sigint); //handles SIGINT command to manually exit loop
     
     while(keep_running){
-	    /*getAccel e quindi l'accelerometro  misura l'inclinazione rispetto alla gravità. 
-           Per l'asse x è positivo se inclinato a destra, negativo se inclinato a sinistra.
-           Per y è positivo se inclinato in avanti, negativo se inclinato indietro.
-           Per z è abbastanza costante poichè  misura la gravità.*/
+	    
 	    device.getAccel(&ax, &ay, &az);
-	    std::cout << "Valori dell'accelerometro: X: " << ax << ", Y: " << ay << ", Z: " << az << "\n";
+	    std::cout << "Accelerometer values (in g): X: " << ax << ", Y: " << ay << ", Z: " << az << "\n";
 
-	    /*getGyro e quindi il giroscopio misura la velocità angolare ovvero la velocità con cui ruota il sensore.
-           L'asse delle x indica se il dispositivo ruota in avanti o all'indietro.
-           L'asse delle y indica se il dispositivo ruota a destra o a sinistra.
-           L'asse z indica se il dispositivo gira su se stesso. */
+	    
 	    device.getGyro(&gr, &gp, &gy);
-	    std::cout << "Valori del giroscopio(velocità angolare):\nX: " << gr << ", Y: " << gp << ", Z: " << gy << "\n";
+	    std::cout << "Gyroscope values (angular velocity):\nX: " << gr << ", Y: " << gp << ", Z: " << gy << "\n";
 
 	    device.getAngle(0, &roll); // Roll
 	    device.getAngle(1, &pitch); // Pitch
@@ -120,23 +114,23 @@ int main() {
 	    }
 		if((lastRoll!=0 && lastPitch!=0 && lastYaw!=0) && (abs(lastRoll-roll)>2 || abs(lastPitch-pitch)>2 || abs(lastYaw-yaw)>2)){
 		    lastRoll=lastPitch=lastYaw=0;	
-			break; //se c'è un cambio repentino nei dati li invia al server e termina il loop
+			break; //break loop and sends last data if there's a sudden incline change
 		}
 	    lastRoll=roll;
 		lastPitch=pitch;
 		lastYaw=yaw;
 		counter++;
-		if(counter==450000){ //ogni 450000 cicli manda la scansione di routine al server
+		if(counter==450000){ //sends data to server every 450000 cycles
 			sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
 			counter=0;
 		}
 		usleep(750000);
 		
-	    std::cout << "Angoli finali:\nX: " << roll << ", Y: " << pitch << ", Z: " << yaw << "\n";
-		std::cout <<"\nPREMERE CTRL+C SE SI VUOLE INTERROMPERE IL MONITORAGGIO.\n";	
+	    std::cout << "Final angles:\nX: " << roll << ", Y: " << pitch << ", Z: " << yaw << "\n";
+		std::cout <<"\nPRESS CTRL+C TO MANUALLY END PROCESS.\n";	
     }
 	sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
-	std::cout <<"Monitoraggio interrotto correttamente.\n";
+	std::cout <<"Monitoring interrupted, last data sent to server.\n";
 	return 0;
 }
 

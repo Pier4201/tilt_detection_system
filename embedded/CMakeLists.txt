@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
 
-# Imposta il percorso della sysroot
+# sets sysroot path
 set(CMAKE_SYSROOT /opt/arm64-sysroot)
 
 set (CMAKE_C_COMPILER aarch64-linux-gnu-gcc-12)
@@ -21,13 +21,13 @@ find_package(CURL REQUIRED)
 
 include_directories("${CMAKE_SYSROOT}/usr/local/include")
 
-#nome del progetto e linguaggio
+#project name and utilized language
 project(ProgTiro LANGUAGES C CXX) 
 
-#aggiunge la libreria condivisa
+#creates the shared library
 add_library(MPU6050 SHARED src/MPU6050.cpp)
 
-#aggiunge l'eseguibile
+#creates the executable
 add_executable(Example src/Example.cpp src/DataSender.cpp)
 
 target_link_libraries(Example PRIVATE MPU6050 curl i2c pthread dl)
