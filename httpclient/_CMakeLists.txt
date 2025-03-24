@@ -1,0 +1,21 @@
+#indica versione minima di CMake
+cmake_minimum_required(VERSION 3.28)
+
+set (CMAKE_C_COMPILER aarch64-linux-gnu-gcc-12)
+set (CMAKE_CXX_COMPILER aarch64-linux-gnu-g++-12)
+
+#nome del progetto e linguaggio
+project(ProgTiro LANGUAGES C CXX) 
+
+#vede se il pacchetto curl è installato
+find_package(CURL REQUIRED)
+
+#aggiunge la libreria condivisa
+add_library(MPU6050 SHARED src/MPU6050.cpp)
+
+#aggiunge l'eseguibile
+add_executable(Example src/Example.cpp)
+target_link_libraries(Example PRIVATE MPU6050 CURL::libcurl -li2c -pthread)
+
+
+

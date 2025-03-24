@@ -1,0 +1,4 @@
+/home/matteo/develop/httpclient/build/CMakeFiles/MPU6050.dir
+/home/matteo/develop/httpclient/build/CMakeFiles/Example.dir
+/home/matteo/develop/httpclient/build/CMakeFiles/edit_cache.dir
+/home/matteo/develop/httpclient/build/CMakeFiles/rebuild_cache.dir
