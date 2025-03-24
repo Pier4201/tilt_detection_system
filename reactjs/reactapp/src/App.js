@@ -111,7 +111,7 @@ function App() {
 
   // Caricamento dati iniziali + socket.io
   useEffect(() => {
-    const socket = io('http://192.168.20.122:3001',{
+    const socket = io('http://insertyourdomain:3001',{
       //secure: true,
       //rejectUnauthorized: false
     }); // collegamento socket.io
@@ -120,7 +120,7 @@ function App() {
     // Funzione per caricare dati da backend
     const fetchData = async () => {  
       try {
-        const response = await fetch('http://192.168.20.122:3001/data');
+        const response = await fetch('http://insertyourdomain/data');
         const jsonData = await response.json();
         setData(jsonData);
       } catch (error) {
@@ -153,10 +153,10 @@ function App() {
 
   return (
     <div>
-      <h1>Dati delle rilevazioni del sensore</h1>
+      <h1>Sensor Data</h1>
       <SearchBar searchId={searchId} onSearchIdChange={setSearchId} /> {/*implementa funzione barra ricerca*/}
       <DataTable data={filteredData} /> {/*implementa funzione tabella*/}
-      <h2>Grafico per ID</h2>
+      <h2>Graphs for IDs</h2>
       <SensorChart data={dataForChart}/>
     </div>
   );

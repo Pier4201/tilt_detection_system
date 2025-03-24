@@ -1,8 +1,7 @@
 import express from 'express'; //libreria per la gesitione delle richieste
 import fs from 'fs'; //libreria per la gestione dei file (salvare e leggere i json)
-import cors from 'cors'; //libreria per rispondere alle richieste da react (da fare)
+import cors from 'cors'; //libreria per rispondere alle richieste da react 
 import http from 'http';
-import https from 'https'; // libreria per creare il server
 import { Server } from  'socket.io'; //libreria per la gestione delle notifiche tra backend e frontend
 
 
