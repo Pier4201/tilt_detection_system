@@ -71,5 +71,6 @@ This project includes:
 ---
 
 ## Web page preview
+A preview of what the user would see on his browser when visiting the web page:
 
 <img src="uiimage/Ui.png" alt="Web Interface Screenshot" width="600">
