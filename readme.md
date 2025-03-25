@@ -65,7 +65,7 @@ This project includes:
 - The page includes:
   - A table displaying all received tilt data
   - A live-updating chart
-  - Filter by ID
+  - Filter by ID for both table and chart
   - Visual alerts when thresholds are exceeded
 
 ---
