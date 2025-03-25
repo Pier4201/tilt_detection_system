@@ -66,7 +66,7 @@ This project includes:
   - A table displaying all received tilt data
   - A live-updating chart
   - Filter by ID working on both table and chart
-  - Visual alerts when thresholds are exceeded
+  - Visual alerts when thresholds (2.5 °) on roll pitch and yaw values are exceeded
 
 ---
 
