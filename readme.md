@@ -58,7 +58,7 @@ This project includes:
 - The embedded client sends a JSON payload to `/data`
 
 #### Node.js → Browser (WebSocket)
-- The server forwards real-time data to connected clients via socket.io
+- The server forwards real-time data to connected clients via socket.io. Data contained in the chart and table will update every time a new JSON payload is received.
 
 #### Browser → Node.js (GET)
 - The browser sends a `GET` request to `/` and receives the `index.html`
