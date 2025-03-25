@@ -36,7 +36,7 @@ This project includes:
 
 - **Language**: C++
 - **Description**:
-  - Initializes MPU6050 (accelerometer + gyroscope)
+  - Initializes MPU6050 (3 axys accelerometer + 3 axys gyroscope)
   - Computes offsets
   - Reads raw sensor data and calculates tilt angles
   - Packs data into a JSON object
@@ -50,7 +50,7 @@ This project includes:
 - **Languages**: JavaScript (Node.js + Express), HTML/CSS
 - **Runtime**: Node.js
 - **Security**: TLS encryption over HTTPS
-- **Real-time updates**: socket.io (bidirectional communication)
+- **Real-time updates**: socket.io (bidirectional, real-time and low latency communication)
 
 ### Communication Flow
 
@@ -70,6 +70,6 @@ This project includes:
 
 ---
 
-## Screenshot
+## Web page preview
 
 <img src="uiimage/Ui.png" alt="Web Interface Screenshot" width="600">
