@@ -72,4 +72,4 @@ This project includes:
 
 ## Screenshot
 
-<img src="assets/screenshot.png" alt="Web Interface Screenshot" width="600">
+<img src="uiimage/Ui.png" alt="Web Interface Screenshot" width="600">
