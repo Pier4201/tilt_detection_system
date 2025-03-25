@@ -9,8 +9,8 @@ import { fileURLToPath } from 'url'; // path library
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const options= {         //adds certificates for tsl
-  key: fs.readFileSync('/home/matteo/develop/server2/server-key.pem'),
-  cert: fs.readFileSync('/home/matteo/develop/server2/server-cert.pem'),
+  key: fs.readFileSync('/home/matteo/develop/server/server-key.pem'),
+  cert: fs.readFileSync('/home/matteo/develop/server/server-cert.pem'),
 };
 
 const app = express();
