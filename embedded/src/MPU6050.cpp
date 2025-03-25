@@ -1,4 +1,4 @@
-//Include le librerie necessarie per il funzionamento del programma
+//Includes the header file for this class
 #include "MPU6050.h"
 
 MPU6050::MPU6050(int8_t addr, bool run_update_thread) {
@@ -20,13 +20,13 @@ MPU6050::MPU6050(int8_t addr, bool run_update_thread) {
 		std::cout << "ERR (MPU6050.cpp:MPU6050()): Could not get I2C bus with " << addr << " address. Please confirm that this address is correct\n"; //Print error message
 	}
 
-	i2c_smbus_write_byte_data(f_dev, 0x6b, 0b00000000); //Fa uscire l'MPU6050 dalla modalità riposo
-	i2c_smbus_write_byte_data(f_dev, 0x1a, 0b00000011); //Setta il filtro passa basso a 44Hz in modo che
-	i2c_smbus_write_byte_data(f_dev, 0x19, 0b00000100); //Imposta il divisore del rate di campionamento a 200Hz - see Register Map
-	i2c_smbus_write_byte_data(f_dev, 0x1b, GYRO_CONFIG); //Configura il giroscopio - see Register Map (vedere MPU6050.h per i parametri di GYRO_CONFIG)
-	i2c_smbus_write_byte_data(f_dev, 0x1c, ACCEL_CONFIG); //Configure l'accelerometro - see Register Map (VEDERE MPU6050.h per i parametri di ACCEL_CONFIG)
+	i2c_smbus_write_byte_data(f_dev, 0x6b, 0b00000000); //Signals MPU6050 to exit sleep mode
+	i2c_smbus_write_byte_data(f_dev, 0x1a, 0b00000011); //Sets the low pass filter to 44Hz
+	i2c_smbus_write_byte_data(f_dev, 0x19, 0b00000100); //Sets the sample rate divider to 200Hz - see Register Map
+	i2c_smbus_write_byte_data(f_dev, 0x1b, GYRO_CONFIG); //Gyro settings configuration - see Register Map (see MPU6050.h for the GYRO_CONFIG parameters)
+	i2c_smbus_write_byte_data(f_dev, 0x1c, ACCEL_CONFIG); //Accel settings configuration - see Register Map (see MPU6050.h for the ACCEL_CONFIG parameters)
 
-	//Imposta gli offset a zero
+	//Sets offset to zero
 	i2c_smbus_write_byte_data(f_dev, 0x06, 0b00000000);
 	i2c_smbus_write_byte_data(f_dev, 0x07, 0b00000000);
 	i2c_smbus_write_byte_data(f_dev, 0x08, 0b00000000);
@@ -37,7 +37,7 @@ MPU6050::MPU6050(int8_t addr, bool run_update_thread) {
 	i2c_smbus_write_byte_data(f_dev, 0x01, 0b00000001);
 	i2c_smbus_write_byte_data(f_dev, 0x02, 0b10000001);
 
-	//Avvia il thread di aggiornamento se run_update_thread è true per far continuare in background il la routine di aggiornamento e staccandola per permettere al programma di continuare
+	//Starts a separate thread for the update routine to run while the program continues
 	if (run_update_thread){
 		std::thread(&MPU6050::_update, this).detach();
 	}
@@ -72,13 +72,13 @@ void MPU6050::getAccelRaw(float *x, float *y, float *z) {
 
 void MPU6050::getAccel(float *x, float *y, float *z) {
 	getAccelRaw(x, y, z); //Store raw values into variables
-	*x = round((*x - accelOffsetX) * 1000.0 / ACCEL_SENS) / 1000.0; //Rimuove gli offset e divide per la sensibilità (use 1000 and round() to round the value to three decimal places)
+	*x = round((*x - accelOffsetX) * 1000.0 / ACCEL_SENS) / 1000.0; //Removes the calculated offset value and divides by 1000 (use 1000 and round() to round the value to three decimal places)
 	*y = round((*y - accelOffsetY) * 1000.0 / ACCEL_SENS) / 1000.0;
 	*z = round((*z - accelOffsetZ) * 1000.0 / ACCEL_SENS) / 1000.0;
 }
 
 void MPU6050::getOffsets(float *ax_off, float *ay_off, float *az_off, float *gr_off, float *gp_off, float *gy_off) {
-    std::cout << "Inizio calibrazione sensore...\n\n";
+    std::cout << "Starting sensor calibration...\n\n";
 
     //float accel_off[3] = {0, 0, 0}; 
     //float gyro_off[3] = {0, 0, 0};
@@ -100,15 +100,15 @@ void MPU6050::getOffsets(float *ax_off, float *ay_off, float *az_off, float *gr_
         *az_off += tempAz;
     }
 
-    // Media dei valori per ottenere gli offset reali
+    // Average of the calculated offset values to improve accountability
     *gr_off /= samples;
     *gp_off /= samples;
     *gy_off /= samples;
     *ax_off /= samples;
     *ay_off /= samples;
-    *az_off = (*az_off / samples) - ACCEL_SENS; // Compensazione gravità
+    *az_off = (*az_off / samples) - ACCEL_SENS; // compensating gravity
 
-    // Salva gli offset per il giroscopio e l'accelerometro
+    // Saves accel and gyro offset values
     gyroOffsetX = *gr_off;
     gyroOffsetY = *gp_off;
     gyroOffsetZ = *gy_off;
@@ -117,9 +117,9 @@ void MPU6050::getOffsets(float *ax_off, float *ay_off, float *az_off, float *gr_
     accelOffsetZ = *az_off;
 
 
-    std::cout << "OFFSET CALCOLATI:\n";
-	std::cout << "Accelerometro X, Y, Z: " << accelOffsetX << ", " << accelOffsetY << ", " << accelOffsetZ << "\n";
-    std::cout << "Giroscopio X, Y, Z: " << gyroOffsetX << ", " << gyroOffsetY << ", " << gyroOffsetZ << "\n\n";
+    std::cout << "OFFSET CALCULATED:\n";
+	std::cout << "Accelerometer X, Y, Z: " << accelOffsetX << ", " << accelOffsetY << ", " << accelOffsetZ << "\n";
+    std::cout << "Gyroscope X, Y, Z: " << gyroOffsetX << ", " << gyroOffsetY << ", " << gyroOffsetZ << "\n\n";
     
 }
 
