@@ -61,7 +61,7 @@ This project includes:
 - The server forwards real-time data to connected clients via socket.io. Data contained in the chart and table will update every time a new JSON payload is received.
 
 #### Browser → Node.js (GET)
-- The browser sends a `GET` request to `/` and receives the `index.html`
+- The browser sends a `GET` request to `/` and receives the HTML page `index.html` 
 - The page includes:
   - A table displaying all received tilt data
   - A live-updating chart
