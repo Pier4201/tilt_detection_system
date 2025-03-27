@@ -4,7 +4,7 @@ A complete system for tilt detection using the MPU6050 sensor with a Raspberry P
 This project includes:
 - C++ embedded code for sensor data acquisition
 - Node.js server with REST API
-- A static HTML+JS frontend served via Express
+- A static HTML+JS frontend served via Express whose content will then be dinamically updated through WebSocket and JavaScript
 
 ---
 
