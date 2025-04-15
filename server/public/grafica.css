@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 
 .allarme-true {
@@ -14,22 +14,52 @@
 
 }
 
+#div-logo{
+  background-color: #ffffff;
+  margin-bottom: 0;
+}
+
 #div-grafico {
   margin-top: 30px;
 }
+
+.button-container {
+  display: flex;
+  justify-content: center; /*oppure: flex-start/ flex-end / space-between*/
+  gap: 10px; /*distanza tra i bottoni*/
+  padding: 15px 0;
+  background-color: rgb(95, 123, 160);
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+.button-container button {
+  padding: 5px 20px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #2f577f;
+  color: white;
+}
+
+.button-container button:hover {
+  background-color: #1c3d5a;
+}
+
 
 .search-bar {
     width: 200px;
     padding: 8px;
     display: block;
-    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     text-align: center;
     margin:auto;
     }
 
 table {
-  width: 99%;
+  width: 98.5%;
   border-collapse: collapse;
   margin: 10px; /*spazio tra bordo ed esterno*/
   background-color: #f5f5f5;
@@ -51,19 +81,19 @@ td {
 
 h1 {
   text-align: center;
-  font-family: 'Poppins', sans-serif;
   display:block;
+  font-style: italic;
+  color: #ffffff;
 }
 
 h2 {
     text-align: center;
-    font-family: 'Poppins', sans-serif;
 }
 
 body {
   background-color: #2f577f; /*colore sfondo*/
   margin: 0; /* Togli margini per evitare spazi bianchi */
   padding: 0; /* Togli padding se non ti serve */
-  font-family: 'Poppins', sans-serif; /* (Opzionale) Cambia font generale */
+  font-family: 'Open Sans', sans-serif; /* (Opzionale) Cambia font generale */
   display: block;
 }
