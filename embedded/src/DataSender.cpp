@@ -115,7 +115,7 @@ if (file.is_open()) {
          << "\"roll\":" << roll << ","
          << "\"pitch\":" << pitch << ","
          << "\"yaw\":" << yaw << ","
-         << "\"fallDetected\":" << (fallDetected ? "true" : "false")
+         << "\"allarme\":" << (allarme ? "true" : "false")
          << "}" << std::endl;
     file.close();
 } else {
