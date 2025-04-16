@@ -99,4 +99,26 @@ std::cout << "Server response:\n" << responseString << std::endl;
 curl_slist_free_all(headers);
 curl_easy_cleanup(curl);
 }
+
+// Saves data in local folder
+std::ofstream file("data_log.json", std::ios::app); // to write new data at the end of file
+if (file.is_open()) {
+    file << "{"
+         << "\"timestamp\":\"" << getTimestamp() << "\","
+         << "\"infrastruttura\":\"" << infrastruttura << "\","
+         << "\"accel_x\":" << accel_x << ","
+         << "\"accel_y\":" << accel_y << ","
+         << "\"accel_z\":" << accel_z << ","
+         << "\"gyro_x\":" << gyro_x << ","
+         << "\"gyro_y\":" << gyro_y << ","
+         << "\"gyro_z\":" << gyro_z << ","
+         << "\"roll\":" << roll << ","
+         << "\"pitch\":" << pitch << ","
+         << "\"yaw\":" << yaw << ","
+         << "\"fallDetected\":" << (fallDetected ? "true" : "false")
+         << "}" << std::endl;
+    file.close();
+} else {
+    std::cerr << "Failed to open file in write mode" << std::endl;
+}
 }
