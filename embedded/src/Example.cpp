@@ -112,28 +112,28 @@ int main() {
 	    } else {
 		     allarme = false;
 	    }
-		if((lastRoll!=0 && lastPitch!=0 && lastYaw!=0) && (abs(lastRoll-roll)>2 || abs(lastPitch-pitch)>2 || abs(lastYaw-yaw)>2)){
-		    lastRoll=lastPitch=lastYaw=0;	
-			break; //break loop and sends last data if there's a sudden incline change
-		}
-		if(allarme==true && counter%15000==0 && counter!=450000){ //if alarm is true sends data more frequently
-			sendDataToServer(infrastruttura,ax,ay,az,gr,gp,gy,roll,pitch,yaw,allarme)
-		}
-	    lastRoll=roll;
-		lastPitch=pitch;
-		lastYaw=yaw;
-		counter++;
-		if(counter==450000){ //sends data to server every 450000 cycles
-			sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
-			counter=0;
-		}
-		usleep(750000);
+	if((lastRoll!=0 && lastPitch!=0 && lastYaw!=0) && (abs(lastRoll-roll)>2 || abs(lastPitch-pitch)>2 || abs(lastYaw-yaw)>2)){
+		lastRoll=lastPitch=lastYaw=0;	
+		break; //break loop and sends last data if there's a sudden incline change
+	}
+	if(allarme==true && counter%15000==0 && counter!=450000){ //if alarm is true sends data more frequently
+		sendDataToServer(infrastruttura,ax,ay,az,gr,gp,gy,roll,pitch,yaw,allarme);
+	}
+	lastRoll=roll;
+	lastPitch=pitch;
+	lastYaw=yaw;
+	counter++;
+	if(counter==450000){ //sends data to server every 450000 cycles
+		sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
+		counter=0;
+	}
+	usleep(750000);
 		
-	    std::cout << "Final angles:\nX: " << roll << ", Y: " << pitch << ", Z: " << yaw << "\n";
-		std::cout <<"\nPRESS CTRL+C TO MANUALLY END PROCESS.\n";	
-    }
-	sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
-	std::cout <<"Monitoring interrupted, last data sent to server.\n";
-	return 0;
+	std::cout << "Final angles:\nX: " << roll << ", Y: " << pitch << ", Z: " << yaw << "\n";
+	std::cout <<"\nPRESS CTRL+C TO MANUALLY END PROCESS.\n";	
+   }
+   sendDataToServer(infrastruttura, ax, ay, az, gr, gp, gy, roll, pitch, yaw, allarme);
+   std::cout <<"Monitoring interrupted, last data sent to server.\n";
+   return 0;
 }
 
