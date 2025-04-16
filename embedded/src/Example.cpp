@@ -116,6 +116,9 @@ int main() {
 		    lastRoll=lastPitch=lastYaw=0;	
 			break; //break loop and sends last data if there's a sudden incline change
 		}
+		if(allarme==true && counter%15000==0 && counter!=450000){ //if alarm is true sends data more frequently
+			sendDataToServer(infrastruttura,ax,ay,az,gr,gp,gy,roll,pitch,yaw,allarme)
+		}
 	    lastRoll=roll;
 		lastPitch=pitch;
 		lastYaw=yaw;
